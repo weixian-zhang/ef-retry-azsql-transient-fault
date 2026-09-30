@@ -212,7 +212,6 @@ If scenario 1 reports 10013, note that the firewall doesn't imitate a real outag
 
 ## Open items
 
-- **Build error:** `src/SqlRetryScenarios.cs:67` still calls `EntityFrameworkCustomRetryStrategyScenario`, whose file was deleted. Remove the call or restore the file.
 - **Package mix:** EF Core 6.0.36 is used with SqlClient 5.2.2 (EF 6 was built against 2.1). It compiles, but hasn't been tested at runtime.
 - **Unconfirmed:**
   - the firewall block's error number (expected 10013);

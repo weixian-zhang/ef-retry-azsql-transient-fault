@@ -13,9 +13,4 @@
     <PackageReference Include="Polly.Core" Version="8.8.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- The test project in test/ builds on its own. -->
-    <Compile Remove="test/**" />
-  </ItemGroup>
-
 </Project>

@@ -64,7 +64,6 @@ public static class SqlRetryScenarios
         await PollyTransactionRetryScenario.RunAsync(connectionString);
         await StoredProcedureRetryScenario.RunAsync(connectionString);
         await EntityFrameworkRetryScenario.RunAsync(connectionString);
-        await EntityFrameworkCustomRetryStrategyScenario.RunAsync(connectionString);
     }
 
     /// <summary>
