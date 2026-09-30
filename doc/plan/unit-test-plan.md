@@ -126,15 +126,14 @@ A self-contained xUnit project (net6.0, EF Core 6.0.36, SqlClient 5.2.2). It has
 | File | Role |
 |---|---|
 | `OrderDbContext.cs` | Test context with `EnableRetryOnFailure(3 retries, 1 ms delay)`; takes the interceptor through its constructor |
-| `TransientNetworkFailureTests.cs` | The tests, plus `FailingConnectionInterceptor` and `SqlExceptionFactory` |
+| `Local_No_DB_Transient_Error_Tests.cs` | The tests |
+| `helper/SqlExceptionFactory.cs` | Builds a `SqlException` with a chosen error number through SqlClient internals |
+| `helper/FailingConnectionInterceptor.cs` | Throws the chosen `SqlException` when EF opens the connection |
 | `RecordingRetryStrategy.cs` (to add) | Custom strategy extending `SqlServerRetryingExecutionStrategy`, plus `RetryLog` |
 
 - **How faults are injected:** `ConnectionOpeningAsync` throws a `SqlException` with the chosen number for the first N attempts, then returns `InterceptionResult.Suppress()`. EF then treats the connection as open without any network.
 - **`SqlExceptionFactory`:** `SqlException` has no public constructor, so it's built through SqlClient internals via reflection, as EF Core's own tests do. It was written for SqlClient 5.2, and it throws a clear error if the internals change.
-- **Covered:**
-  - transport errors 233, 997, 10060, 64, 10053, 10054 are retried until the open succeeds;
-  - a network that stays down gives up after max retries with `RetryLimitExceededException`;
-  - 18456 is not retried.
+- **Covered:** 18 of SqlClient's 20 built-in transient errors (all but 42108 and 42109), plus transport errors 64, 10053 and 10054: each is retried until the open succeeds. EF 6.0.36 does not retry 1222, 40143 or 40540, so those 3 cases fail.
 - **Run:** `cd src/test && dotnet test`
 - **To add next:**
   - **Switch `OrderDbContext` to the custom strategy** (`RecordingRetryStrategy`, 1 ms base delay), passing in a `RetryLog`.

@@ -1,12 +1,14 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace RetryTests;
 
 /// <summary>
-/// Test DbContext with EF's SQL Server retry turned on. The interceptor passed in decides what
-/// happens when EF opens the connection, so no real database or network is needed.
+/// Test DbContext with retry turned on through DefaultAndCustomTransientErrorRetryExecutionStrategy.
+/// The interceptor passed in decides what happens when EF opens the connection, so no real
+/// database or network is needed.
 /// </summary>
 public sealed class OrderDbContext : DbContext
 {
@@ -21,12 +23,21 @@ public sealed class OrderDbContext : DbContext
 
     public DbSet<Order> Orders => Set<Order>();
 
+    // Opens the connection inside EF's execution strategy, the same way a transaction or query would.
+    public Task OpenConnectionWithRetryAsync() =>
+        Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+        {
+            await Database.OpenConnectionAsync();
+            await Database.CloseConnectionAsync();
+        });
+
     protected override void OnConfiguring(DbContextOptionsBuilder options) =>
         options
-            .UseSqlServer(connectionString, sqlServer => sqlServer.EnableRetryOnFailure(
-                maxRetryCount: MaxRetryCount,
-                maxRetryDelay: TimeSpan.FromMilliseconds(1), // keep tests fast
-                errorNumbersToAdd: null))
+            .UseSqlServer(connectionString, sqlServer => sqlServer.ExecutionStrategy(
+                dependencies => new DefaultAndCustomTransientErrorRetryExecutionStrategy(
+                    dependencies,
+                    MaxRetryCount,
+                    maxRetryDelay: TimeSpan.FromMilliseconds(1)))) // keep tests fast
             .AddInterceptors(_connectionInterceptor);
 }
 
