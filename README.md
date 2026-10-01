@@ -1,5 +1,9 @@
 # ef-retry-transient-fault
 
+## Disclaimer
+
+The sample code and test scenarios provided in this document are intended for demonstration, and validation purposes only. They are not production-ready solutions and may require additional review, testing, security validation, error handling, monitoring, and customization to meet specific business, operational, and compliance requirements. The examples are provided to illustrate concepts and recommended approaches for handling transient errors in Azure SQL and Entity Framework. Customers are responsible for evaluating, modifying, and validating the code within their own environments before use in production.
+
 ## Local_No_DB_Transient_Error_Tests
 
 `src/test/Local_No_DB_Transient_Error_Tests.cs` checks how Entity Framework's retry strategy reacts to SQL transient errors, such as those seen during an Azure SQL failover.
