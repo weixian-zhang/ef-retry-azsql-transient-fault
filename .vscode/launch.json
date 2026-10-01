@@ -1,0 +1,14 @@
+{
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Start the tests first, paused:  cd src/test && VSTEST_HOST_DEBUG=1 dotnet test --filter <test name>
+            // then run this and pick the testhost process whose id dotnet test printed.
+            "name": "Attach to test host",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
+}

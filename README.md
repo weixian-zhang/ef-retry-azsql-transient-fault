@@ -12,12 +12,8 @@ It needs **no Azure SQL database and no network blockage**. An Entity Framework 
 
 It runs a SELECT, then adds a Windows Firewall rule on the test machine that blocks outbound SQL ports (1433, 11000-11999) and runs the SELECT again. The test passes when Entity Framework retries until it runs out of retries, which shows the retry strategy treated the failure as transient. The rule is always removed afterwards.
 
-Run it on a Windows VM, from an elevated shell, with `SQL_CONNECTION_STRING`.
+Run it on a Windows VM, from an elevated shell.
 
-### SQL_CONNECTION_STRING
+### ConnectionString
 
-Required. A connection string to the Azure SQL database, signing in with the VM's managed identity.
-
-```powershell
-$env:SQL_CONNECTION_STRING = "Server=tcp:<server>.database.windows.net,1433;Database=<database>;Authentication=Active Directory Managed Identity;Encrypt=True;"
-```
+Required. In the test file, replace `<server>` and `<database>` in the fake `ConnectionString` with the real Azure SQL database. It signs in with the VM's managed identity.

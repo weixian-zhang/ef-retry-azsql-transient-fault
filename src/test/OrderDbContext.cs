@@ -12,7 +12,7 @@ namespace RetryTests;
 /// </summary>
 public sealed class OrderDbContext : DbContext
 {
-    public const int MaxRetryCount = 3; // retries, not counting the first attempt
+    public const int MaxRetryCount = 5; // retries, not counting the first attempt
 
     // Never reached: the interceptor fails or suppresses every open.
     private const string UnreachableConnectionString = "Server=tcp:unreachable.test,1433;Database=Orders;Encrypt=True;";
@@ -44,7 +44,7 @@ public sealed class OrderDbContext : DbContext
             dependencies => new DefaultAndCustomTransientErrorRetryExecutionStrategy(
                 dependencies,
                 MaxRetryCount,
-                maxRetryDelay: TimeSpan.FromMilliseconds(1)))); // keep tests fast
+                maxRetryDelay: TimeSpan.FromMilliseconds(2)))); // keep tests fast
 
         if (_connectionInterceptor != null)
         {
